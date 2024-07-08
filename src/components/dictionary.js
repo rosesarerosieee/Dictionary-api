@@ -1,4 +1,4 @@
-import {useState} from  'react';
+import {useState, useEffect} from  'react';
 import axios from 'axios';
 import './dictionary.css';
 
@@ -7,6 +7,7 @@ const Dictionary = () => {
     const [word, setWord] = useState('');
     const [definition, setDefinition] = useState(null);
     const [error, setError] = useState(null);
+    const [animateState, setAnimateState] = useState(false);
 
     const fetchDefinition = async () => {
         try{
@@ -27,20 +28,31 @@ const Dictionary = () => {
         setWord('');
     }
 
+    const triggerAnimation = () => {
+        setAnimateState(false);
+        setTimeout(() => setAnimateState(true), 0);
+    };
+
+    useEffect(() => {
+        if(definition){
+            triggerAnimation();
+        }
+    },[definition]);
+
     return(
         <>
-        <div className='container'>
-            <div className='card'>
+        <div className='container w-full h-100 flex item-center justify-center'>
+            <div className='card mt-20'>
                 <div className='inputs'>
-                    
                     <form onSubmit={handleSubmit}>
-                        
-                        <input type='text'
-                        value={word}
-                        onChange={(e) => setWord(e.target.value)}
-                        placeholder='Enter a word'
-                        required
-                        />
+                        <div className='text-input'>
+                            <input type='text'
+                            value={word}
+                            onChange={(e) => setWord(e.target.value)}
+                            placeholder='Enter a word'
+                            required
+                            />
+                        </div>
 
                         <div className='button'>
                             <button type='submit'>Search</button>
@@ -50,13 +62,13 @@ const Dictionary = () => {
                     {error && <p>{error}</p>}
 
                     {definition && (
-                        <>
-                        <div className='word'>
+                        <div className={`definitions-container w-full h-full ${animateState ? 'pop-up' : ''}`}>
+                        <div className={`word text-center font-extrabold uppercase ${animateState ? 'pop-up' : ''}`}>
                             <h2>{definition.word}</h2>
                         </div>
                         
-                        <div className='definition'>
-                            <h3>Definitions: </h3>
+                        <div className={`definition ${animateState ? 'pop-up' : ''}`}>
+                            <h3 className='font-extrabold'>Definitions: </h3>
                             {definition.meanings.map((meaning, index) => (
                                 <div key={index}>
                                     <span>{meaning.partofSpeech}</span>
@@ -66,7 +78,7 @@ const Dictionary = () => {
                                 </div>
                             ))}
                         </div>
-                        </>
+                        </div>
                     )}
 
                 </div>
