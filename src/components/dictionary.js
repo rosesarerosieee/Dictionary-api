@@ -1,6 +1,8 @@
 import {useState, useEffect} from  'react';
 import axios from 'axios';
 import './dictionary.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch} from '@fortawesome/free-solid-svg-icons';
 
 const Dictionary = () => {
 
@@ -41,8 +43,9 @@ const Dictionary = () => {
 
     return(
         <>
-        <div className='container w-full h-100 flex item-center justify-center'>
-            <div className='card mt-20'>
+        <div className='container flex items-center justify-center flex-col w-screen h-screen'>
+          <h1 className='tittle text-xl text-black font-extrabold uppercase'>Dictionary</h1>  
+            <div className='card mt-10'>
                 <div className='inputs'>
                     <form onSubmit={handleSubmit}>
                         <div className='text-input'>
@@ -51,11 +54,18 @@ const Dictionary = () => {
                             onChange={(e) => setWord(e.target.value)}
                             placeholder='Enter a word'
                             required
+                            className='w-52 h-8'
                             />
                         </div>
 
-                        <div className='button'>
-                            <button type='submit'>Search</button>
+                        <div className='button-submit'>
+                            <button type='submit' className='button w-32 h-8 bg-black text-white'>
+                                <span className='button-text'>Search</span>
+                                <FontAwesomeIcon
+                                    icon={faSearch}
+                                    className='search-icon'
+                                />
+                            </button>
                         </div>
                     </form>
 
