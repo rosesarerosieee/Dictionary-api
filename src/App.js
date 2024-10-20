@@ -1,6 +1,5 @@
 import './App.css';
 import Dictionary from './components/dictionary';
-
 function App() {
   return (
     <div className="App">
