@@ -26,7 +26,6 @@ const Dictionary = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     fetchDefinition();
-    setWord("");
   };
 
   const handleMouseEnter = () => {
@@ -48,10 +47,31 @@ const Dictionary = () => {
     }
   }, [definition]);
 
+  useEffect(() => {
+    if (word) {
+      localStorage.setItem("word", word); // No need to JSON.stringify a simple string
+    }
+    if (definition) {
+      localStorage.setItem("definition", JSON.stringify(definition)); // Keep this as it is
+    }
+  }, [word, definition]);
+
+  useEffect(() => {
+    const storedWord = localStorage.getItem("word");
+    const storedDefinition = localStorage.getItem("definition");
+
+    if (storedWord) {
+      setWord(storedWord); // This is already a string, so no need to parse it
+    }
+    if (storedDefinition) {
+      setDefinition(JSON.parse(storedDefinition)); // Parsing required because it's stored as a JSON string
+    }
+  }, []);
+
   return (
     <>
       <div className="w-full h-screen flex items-center justify-center bg-[khaki]">
-        <div className="relative w-[400px] h-[85vh] flex flex-col items-center justify-start rounded-[50px] overflow-y-auto gap-[20px] bg-[lightgoldenrodyellow] p-[20px]">
+        <div className="relative w-[250px] h-[90vh] flex flex-col items-center justify-start rounded-[50px] overflow-y-auto gap-[20px] bg-[lightgoldenrodyellow] p-[20px] md:w-[400px] md:h-[85vh] xl:w-[400px] xl:h-[85vh]">
           <div className="justify-self-start">
             <h1 className="text-xl text-black font-extrabold uppercase">
               Dictionary
@@ -87,37 +107,39 @@ const Dictionary = () => {
               </div>
             </form>
             {error && <p>{error}</p>}
-            {definition && (
-              <div
-                className={`definitions-container w-full h-full ${
-                  animateState ? "animate-pop-up" : ""
-                }`}
-              >
+            {definition &&
+              definition.meanings &&
+              Array.isArray(definition.meanings) && (
                 <div
-                  className={`word text-center font-extrabold uppercase ${
+                  className={`definitions-container w-full h-full ${
                     animateState ? "animate-pop-up" : ""
                   }`}
                 >
-                  <h2>{definition.word}</h2>
-                </div>
+                  <div
+                    className={`word text-center font-extrabold uppercase ${
+                      animateState ? "animate-pop-up" : ""
+                    }`}
+                  >
+                    <h2>{definition.word}</h2>
+                  </div>
 
-                <div
-                  className={`definition mt-[20px] ${
-                    animateState ? "animate-pop-up" : ""
-                  }`}
-                >
-                  <h3 className="font-extrabold">Definitions:</h3>
-                  {definition.meanings.map((meaning, index) => (
-                    <div key={index}>
-                      <span>{meaning.partofSpeech}</span>
-                      {meaning.definitions.map((def, idx) => (
-                        <p key={idx}>{def.definition}</p>
-                      ))}
-                    </div>
-                  ))}
+                  <div
+                    className={`definition mt-[20px] ${
+                      animateState ? "animate-pop-up" : ""
+                    }`}
+                  >
+                    <h3 className="font-extrabold">Definitions:</h3>
+                    {definition.meanings.map((meaning, index) => (
+                      <div key={index}>
+                        <span>{meaning.partofSpeech}</span>
+                        {meaning.definitions.map((def, idx) => (
+                          <p key={idx}>{def.definition}</p>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
           </div>
         </div>
       </div>
